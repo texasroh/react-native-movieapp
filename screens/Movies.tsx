@@ -2,83 +2,149 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
 import { useState, useEffect } from "react";
-import { ActivityIndicator, Dimensions } from "react-native";
-import { makeImgPath } from "../utils";
+import { ActivityIndicator, Dimensions, RefreshControl } from "react-native";
+import Slide from "../components/Slide";
+import Poster from "../components/Poster";
+import VMedia from "../components/VMedia";
+import HMedia from "../components/HMedia";
 
 const API_KEY = "c183a5884681c02c32b9c0dad01728ba";
 
 const Container = styled.ScrollView`
-    background-color: ${(props) => props.theme.mainBgColor};
+  background-color: ${(props) => props.theme.mainBgColor};
 `;
 
 const Loader = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
-const View = styled.View`
-    flex: 1;
+const ListTitle = styled.Text`
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 30px;
 `;
 
-const BgImg = styled.Image`
-    flex: 1;
+const TrendingScroll = styled.ScrollView`
+  margin-top: 20px;
 `;
 
-const Poster = styled.Image`
-    width: 100px;
-    height: 160px;
-    border-radius: 5px;
+const ListContainer = styled.View`
+  margin-bottom: 40px;
+`;
+
+const ComingSoonTitle = styled(ListTitle)`
+  margin-bottom: 30px;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
-    const [loading, setLoading] = useState(true);
-    const [nowPlaying, setNowPlaying] = useState([]);
+export interface IMovie {
+  id: number;
+  backdrop_path: string;
+  poster_path: string;
+  original_title: string;
+  vote_average: number;
+  overview: string;
+  release_date?: string;
+}
 
-    const getNowPlaying = () => {
-        fetch(
-            `https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=KR`
-        )
-            .then((response) => response.json())
-            .then((json) => {
-                console.log(json);
-                setLoading(false);
-                setNowPlaying(json.results);
-            });
-    };
-    useEffect(() => {
-        getNowPlaying();
-    }, []);
-    return loading ? (
-        <Loader>
-            <ActivityIndicator />
-        </Loader>
-    ) : (
-        <Container>
-            <Swiper
-                horizontal
-                loop
-                autoplayTimeout={3.5}
-                showsButtons={false}
-                showsPagination={false}
-                containerStyle={{ width: "100%", height: SCREEN_HEIGHT / 4 }}
-            >
-                {nowPlaying.map((movie) => (
-                    <View key={movie.id}>
-                        <BgImg
-                            blurRadius={6}
-                            source={{ uri: makeImgPath(movie.backdrop_path) }}
-                        />
-                        <Poster
-                            source={{ uri: makeImgPath(movie.poster_path) }}
-                        />
-                    </View>
-                ))}
-            </Swiper>
-        </Container>
-    );
+const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [nowPlaying, setNowPlaying] = useState<IMovie[]>([]);
+  const [upcoming, setUpcoming] = useState<IMovie[]>([]);
+  const [trending, setTrending] = useState<IMovie[]>([]);
+
+  const getTrending = () => {
+    fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}`)
+      .then((response) => response.json())
+      .then((json) => {
+        setTrending(json.results);
+      });
+  };
+
+  const getUpcoming = () => {
+    fetch(
+      `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1&region=KR`
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setUpcoming(json.results);
+      });
+  };
+
+  const getNowPlaying = () => {
+    fetch(
+      `https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=KR`
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setNowPlaying(json.results);
+      });
+  };
+
+  const getData = async () => {
+    await Promise.all([getNowPlaying(), getUpcoming(), getTrending()]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  };
+  return loading ? (
+    <Loader>
+      <ActivityIndicator />
+    </Loader>
+  ) : (
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <Swiper
+        horizontal
+        loop
+        autoplay
+        autoplayTimeout={3.5}
+        showsButtons={false}
+        showsPagination={false}
+        containerStyle={{
+          marginBottom: 30,
+          width: "100%",
+          height: SCREEN_HEIGHT / 4,
+        }}
+      >
+        {nowPlaying.map((movie) => (
+          <Slide key={movie.id} movie={movie} />
+        ))}
+      </Swiper>
+      <ListContainer>
+        <ListTitle>Trending Movies</ListTitle>
+        <TrendingScroll
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingLeft: 30 }}
+        >
+          {trending.map((movie) => (
+            <VMedia key={movie.id} movie={movie} />
+          ))}
+        </TrendingScroll>
+      </ListContainer>
+      <ComingSoonTitle>Coming Soon</ComingSoonTitle>
+      {upcoming.map((movie) => (
+        <HMedia key={movie.id} movie={movie} />
+      ))}
+    </Container>
+  );
 };
 
 export default Movies;
