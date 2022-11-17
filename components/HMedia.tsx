@@ -7,7 +7,6 @@ import Votes from "./Votes";
 const Movie = styled.View`
   padding: 0px 30px;
   flex-direction: row;
-  margin-bottom: 30px;
 `;
 
 const Title = styled.Text`
