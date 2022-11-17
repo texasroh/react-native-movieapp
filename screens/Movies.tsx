@@ -45,6 +45,14 @@ const ComingSoonTitle = styled(ListTitle)`
   margin-bottom: 30px;
 `;
 
+const VSeperator = styled.View`
+  width: 20px;
+`;
+
+const HSeperator = styled.View`
+  height: 20px;
+`;
+
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export interface IMovie {
@@ -111,48 +119,50 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    <FlatList
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      ListHeaderComponentStyle={{ backgroundColor: "black" }}
+      contentContainerStyle={{ backgroundColor: "black" }}
+      ListHeaderComponent={
+        <>
+          <Swiper
+            horizontal
+            loop
+            autoplay
+            autoplayTimeout={3.5}
+            showsButtons={false}
+            showsPagination={false}
+            containerStyle={{
+              marginBottom: 30,
+              width: "100%",
+              height: SCREEN_HEIGHT / 4,
+            }}
+          >
+            {nowPlaying.map((movie) => (
+              <Slide key={movie.id} movie={movie} />
+            ))}
+          </Swiper>
+          <ListContainer>
+            <ListTitle>Trending Movies</ListTitle>
+            <TrendingScroll
+              data={trending}
+              keyExtractor={(item) => item.id + ""}
+              horizontal
+              ItemSeparatorComponent={VSeperator}
+              contentContainerStyle={{ paddingHorizontal: 30 }}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => <VMedia movie={item} />}
+            />
+          </ListContainer>
+          <ComingSoonTitle>Coming Soon</ComingSoonTitle>
+        </>
       }
-    >
-      <Swiper
-        horizontal
-        loop
-        autoplay
-        autoplayTimeout={3.5}
-        showsButtons={false}
-        showsPagination={false}
-        containerStyle={{
-          marginBottom: 30,
-          width: "100%",
-          height: SCREEN_HEIGHT / 4,
-        }}
-      >
-        {nowPlaying.map((movie) => (
-          <Slide key={movie.id} movie={movie} />
-        ))}
-      </Swiper>
-      <ListContainer>
-        <ListTitle>Trending Movies</ListTitle>
-        <TrendingScroll
-          data={trending}
-          keyExtractor={(item) => item.id + ""}
-          horizontal
-          ItemSeparatorComponent={() => <View style={{ width: 30 }} />}
-          contentContainerStyle={{ paddingHorizontal: 30 }}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <VMedia movie={item} />}
-        />
-      </ListContainer>
-      <ComingSoonTitle>Coming Soon</ComingSoonTitle>
-      <FlatList
-        data={upcoming}
-        keyExtractor={(item) => item.id + ""}
-        ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
-        renderItem={({ item }) => <HMedia movie={item} />}
-      />
-    </Container>
+      data={upcoming}
+      keyExtractor={(item) => item.id + ""}
+      ItemSeparatorComponent={HSeperator}
+      renderItem={({ item }) => <HMedia movie={item} />}
+    />
   );
 };
 
