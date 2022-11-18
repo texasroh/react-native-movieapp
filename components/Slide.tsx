@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import styled from "styled-components/native";
-import { IMovie } from "../screens/Movies";
+import { IMovie } from "../api";
 import { makeImgPath } from "../utils";
 import Poster from "./Poster";
 import Votes from "./Votes";
@@ -39,10 +39,10 @@ const Slide: React.FC<{ movie: IMovie }> = ({ movie }) => {
       <BgImg
         style={StyleSheet.absoluteFill}
         blurRadius={10}
-        source={{ uri: makeImgPath(movie.backdrop_path) }}
+        source={{ uri: makeImgPath(movie.backdrop_path || "") }}
       />
       <Wrapper>
-        <Poster path={movie.poster_path} />
+        <Poster path={movie.poster_path || ""} />
         <Column>
           <Title>{movie.original_title}</Title>
           <Votes votes={movie.vote_average} />

@@ -6,7 +6,7 @@ import { ActivityIndicator, Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
-import { moviesAPI } from "../api";
+import { IMovie, IMovieResponse, moviesAPI } from "../api";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Container = styled(FlatList<IMovie>)`
@@ -51,16 +51,6 @@ const HSeperator = styled.View`
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export interface IMovie {
-  id: number;
-  backdrop_path: string;
-  poster_path: string;
-  original_title: string;
-  vote_average: number;
-  overview: string;
-  release_date?: string;
-}
-
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const queryClient = useQueryClient();
   const {
@@ -68,25 +58,19 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     data: nowPlayingData,
     refetch: refetchNowPlaying,
     isRefetching: isRefetchingNowPlaying,
-  } = useQuery<{
-    results: IMovie[];
-  }>(["movies", "nowPlaying"], moviesAPI.nowPlaying);
+  } = useQuery<IMovieResponse>(["movies", "nowPlaying"], moviesAPI.nowPlaying);
   const {
     isLoading: upcomingLoading,
     data: upcomingData,
     refetch: refetchUpcoming,
     isRefetching: isRefetchingUpcoming,
-  } = useQuery<{
-    results: IMovie[];
-  }>(["movies", "upcoming"], moviesAPI.upcoming);
+  } = useQuery<IMovieResponse>(["movies", "upcoming"], moviesAPI.upcoming);
   const {
     isLoading: trendingLoading,
     data: trendingData,
     refetch: refetchTrending,
     isRefetching: isRefetchingTrending,
-  } = useQuery<{
-    results: IMovie[];
-  }>(["movies", "trending"], moviesAPI.trending);
+  } = useQuery<IMovieResponse>(["movies", "trending"], moviesAPI.trending);
 
   const onRefresh = async () => {
     queryClient.refetchQueries(["movies"]);
@@ -102,7 +86,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     <Loader>
       <ActivityIndicator />
     </Loader>
-  ) : (
+  ) : upcomingData ? (
     <Container
       refreshing={refreshing}
       onRefresh={onRefresh}
@@ -129,25 +113,27 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           </Swiper>
           <ListContainer>
             <ListTitle>Trending Movies</ListTitle>
-            <TrendingScroll
-              data={trendingData?.results}
-              keyExtractor={(item) => item.id + ""}
-              horizontal
-              ItemSeparatorComponent={VSeperator}
-              contentContainerStyle={{ paddingHorizontal: 30 }}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => <VMedia movie={item} />}
-            />
+            {trendingData ? (
+              <TrendingScroll
+                data={trendingData.results}
+                keyExtractor={(item) => item.id + ""}
+                horizontal
+                ItemSeparatorComponent={VSeperator}
+                contentContainerStyle={{ paddingHorizontal: 30 }}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => <VMedia movie={item} />}
+              />
+            ) : null}
           </ListContainer>
           <ComingSoonTitle>Coming Soon</ComingSoonTitle>
         </>
       }
-      data={upcomingData?.results}
+      data={upcomingData.results}
       keyExtractor={(item) => item.id + ""}
       ItemSeparatorComponent={HSeperator}
       renderItem={({ item }) => <HMedia movie={item} />}
     />
-  );
+  ) : null;
 };
 
 export default Movies;
