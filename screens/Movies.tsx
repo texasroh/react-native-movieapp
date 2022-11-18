@@ -7,7 +7,7 @@ import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { moviesAPI } from "../api";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Container = styled(FlatList<IMovie>)`
   background-color: ${(props) => props.theme.mainBgColor};
@@ -62,33 +62,42 @@ export interface IMovie {
 }
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
-  const [refreshing, setRefreshing] = useState(false);
-  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery<{
+  const queryClient = useQueryClient();
+  const {
+    isLoading: nowPlayingLoading,
+    data: nowPlayingData,
+    refetch: refetchNowPlaying,
+    isRefetching: isRefetchingNowPlaying,
+  } = useQuery<{
     results: IMovie[];
-  }>(["movie", "nowPlaying"], moviesAPI.nowPlaying);
-  const { isLoading: upcomingLoading, data: upcomingData } = useQuery<{
+  }>(["movies", "nowPlaying"], moviesAPI.nowPlaying);
+  const {
+    isLoading: upcomingLoading,
+    data: upcomingData,
+    refetch: refetchUpcoming,
+    isRefetching: isRefetchingUpcoming,
+  } = useQuery<{
     results: IMovie[];
-  }>(["movie", "upcoming"], moviesAPI.upcoming);
-  const { isLoading: trendingLoading, data: trendingData } = useQuery<{
+  }>(["movies", "upcoming"], moviesAPI.upcoming);
+  const {
+    isLoading: trendingLoading,
+    data: trendingData,
+    refetch: refetchTrending,
+    isRefetching: isRefetchingTrending,
+  } = useQuery<{
     results: IMovie[];
-  }>(["movie", "trending"], moviesAPI.trending);
-
-  // const getData = async () => {
-  //   await Promise.all([getNowPlaying(), getUpcoming(), getTrending()]);
-  //   setLoading(false);
-  // };
-
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  }>(["movies", "trending"], moviesAPI.trending);
 
   const onRefresh = async () => {
-    // setRefreshing(true);
-    // await getData();
-    // setRefreshing(false);
+    queryClient.refetchQueries(["movies"]);
+    // refetchNowPlaying();
+    // refetchTrending();
+    // refetchUpcoming();
   };
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+  const refreshing =
+    isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
   return loading ? (
     <Loader>
       <ActivityIndicator />
