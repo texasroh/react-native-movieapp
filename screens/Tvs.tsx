@@ -1,10 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
+import { RefreshControl } from "react-native";
 import styled from "styled-components/native";
-import { tvAPI, ITv } from "../api";
-import HList, { HListSeparator } from "../components/HList";
+import { tvAPI } from "../api";
+import HList from "../components/HList";
 import Loader from "../components/Loader";
-import VMedia from "../components/VMedia";
 
 const Container = styled.ScrollView`
   background-color: ${(props) => props.theme.mainBgColor};

@@ -3,7 +3,6 @@ import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
 import { Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
-import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { IMovie, IMovieResponse, moviesAPI } from "../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,20 +23,9 @@ const ListTitle = styled.Text`
 // const TrendingScroll = styled.FlatList`
 //   margin-top: 20px;
 // `;
-const TrendingScroll = styled(FlatList<IMovie>)`
-  margin-top: 20px;
-`;
-
-const ListContainer = styled.View`
-  margin-bottom: 40px;
-`;
 
 const ComingSoonTitle = styled(ListTitle)`
   margin-bottom: 30px;
-`;
-
-const VSeperator = styled.View`
-  width: 20px;
 `;
 
 const HSeperator = styled.View`
