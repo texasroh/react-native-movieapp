@@ -8,6 +8,7 @@ import HMedia from "../components/HMedia";
 import { IMovie, IMovieResponse, moviesAPI } from "../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "../components/Loader";
+import HList from "../components/HList";
 
 const Container = styled(FlatList<IMovie>)`
   background-color: ${(props) => props.theme.mainBgColor};
@@ -103,7 +104,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               <Slide key={movie.id} movie={movie} />
             ))}
           </Swiper>
-          <ListContainer>
+          {/* <ListContainer>
             <ListTitle>Trending Movies</ListTitle>
             {trendingData ? (
               <TrendingScroll
@@ -122,7 +123,8 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                 )}
               />
             ) : null}
-          </ListContainer>
+          </ListContainer> */}
+          <HList title="Trending Movies" data={trendingData!.results} />
           <ComingSoonTitle>Coming Soon</ComingSoonTitle>
         </>
       }
