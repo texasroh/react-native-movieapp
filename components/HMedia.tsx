@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
-import { IMovie } from "../screens/Movies";
 import Poster from "./Poster";
-import Votes from "./Votes";
 
 const Movie = styled.View`
   padding: 0px 30px;
@@ -31,16 +29,34 @@ const Release = styled.Text`
   margin-vertical: 5px;
 `;
 
-const HMedia: React.FC<{ movie: IMovie }> = ({ movie }) => {
-  return (
-    <Movie key={movie.id}>
-      <Poster path={movie.poster_path} />
-      <HColumn>
-        <Title>{movie.original_title}</Title>
+interface IHMediaProps {
+  posterPath?: string;
+  originalTitle: string;
+  overview: string;
+  releaseDate?: string;
+  voteAverage?: number;
+}
 
-        {movie.release_date ? (
+const HMedia: React.FC<IHMediaProps> = ({
+  posterPath,
+  originalTitle,
+  overview,
+  releaseDate,
+  voteAverage,
+}) => {
+  return (
+    <Movie>
+      <Poster path={posterPath} />
+      <HColumn>
+        <Title>
+          {originalTitle.length > 30
+            ? `${originalTitle.slice(0, 30)}...`
+            : originalTitle}
+        </Title>
+
+        {releaseDate ? (
           <Release>
-            {new Date(movie.release_date).toLocaleDateString("ko", {
+            {new Date(releaseDate).toLocaleDateString("ko", {
               month: "long",
               day: "numeric",
               year: "numeric",
@@ -49,9 +65,9 @@ const HMedia: React.FC<{ movie: IMovie }> = ({ movie }) => {
         ) : null}
 
         <Overview>
-          {movie.overview !== "" && movie.overview.length > 80
-            ? `${movie.overview.slice(0, 80)}...`
-            : movie.overview}
+          {overview !== "" && overview.length > 80
+            ? `${overview.slice(0, 80)}...`
+            : overview}
         </Overview>
       </HColumn>
     </Movie>

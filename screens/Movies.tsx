@@ -1,22 +1,16 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { useState, useEffect } from "react";
-import { ActivityIndicator, Dimensions, FlatList } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { IMovie, IMovieResponse, moviesAPI } from "../api";
-import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Loader from "../components/Loader";
 
 const Container = styled(FlatList<IMovie>)`
   background-color: ${(props) => props.theme.mainBgColor};
-`;
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
 `;
 
 const ListTitle = styled.Text`
@@ -83,9 +77,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const refreshing =
     isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
   return loading ? (
-    <Loader>
-      <ActivityIndicator />
-    </Loader>
+    <Loader />
   ) : upcomingData ? (
     <Container
       refreshing={refreshing}
@@ -121,7 +113,13 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                 ItemSeparatorComponent={VSeperator}
                 contentContainerStyle={{ paddingHorizontal: 30 }}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => <VMedia movie={item} />}
+                renderItem={({ item }) => (
+                  <VMedia
+                    original_title={item.original_title}
+                    poster_path={item.poster_path}
+                    vote_average={item.vote_average}
+                  />
+                )}
               />
             ) : null}
           </ListContainer>
@@ -131,7 +129,15 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       data={upcomingData.results}
       keyExtractor={(item) => item.id + ""}
       ItemSeparatorComponent={HSeperator}
-      renderItem={({ item }) => <HMedia movie={item} />}
+      renderItem={({ item }) => (
+        <HMedia
+          originalTitle={item.original_title}
+          overview={item.overview}
+          posterPath={item.poster_path}
+          releaseDate={item.release_date}
+          voteAverage={item.vote_average}
+        />
+      )}
     />
   ) : null;
 };

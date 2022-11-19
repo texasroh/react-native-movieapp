@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components/native";
-import { IMovie } from "../screens/Movies";
 import Poster from "./Poster";
 import Votes from "./Votes";
 
@@ -15,15 +14,25 @@ const Title = styled.Text`
   margin-bottom: 5px;
 `;
 
-const VMedia: React.FC<{ movie: IMovie }> = ({ movie }) => {
+interface IVMediaProps {
+  poster_path?: string;
+  original_title: string;
+  vote_average: number;
+}
+
+const VMedia: React.FC<IVMediaProps> = ({
+  poster_path,
+  original_title,
+  vote_average,
+}) => {
   return (
     <Movie>
-      <Poster path={movie.poster_path} />
+      <Poster path={poster_path} />
       <Title>
-        {movie.original_title.slice(0, 13)}
-        {movie.original_title.length > 13 ? "..." : null}
+        {original_title.slice(0, 13)}
+        {original_title.length > 13 ? "..." : null}
       </Title>
-      <Votes votes={movie.vote_average} />
+      <Votes votes={vote_average} />
     </Movie>
   );
 };

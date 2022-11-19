@@ -18,6 +18,22 @@ export interface IMovie {
   vote_count: number;
 }
 
+export interface ITv {
+  poster_path?: string;
+  popularity: number;
+  id: number;
+  backdrop_path?: string;
+  vote_average: number;
+  overview: string;
+  first_air_date: string;
+  origin_country: string[];
+  genre_ids: number[];
+  original_language: string;
+  vote_count: number;
+  name: string;
+  original_name: string;
+}
+
 interface IBaseResponse {
   page: number;
   total_results: number;
@@ -28,19 +44,32 @@ export interface IMovieResponse extends IBaseResponse {
   results: IMovie[];
 }
 
-const trending = () =>
-  fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`).then((response) =>
-    response.json()
-  );
+export const moviesAPI = {
+  trending: () =>
+    fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`).then(
+      (response) => response.json()
+    ),
+  upcoming: () =>
+    fetch(
+      `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1&region=KR`
+    ).then((response) => response.json()),
+  nowPlaying: () =>
+    fetch(
+      `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=KR`
+    ).then((response) => response.json()),
+};
 
-const upcoming = () =>
-  fetch(
-    `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1&region=KR`
-  ).then((response) => response.json());
-
-const nowPlaying = () =>
-  fetch(
-    `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=KR`
-  ).then((response) => response.json());
-
-export const moviesAPI = { trending, upcoming, nowPlaying };
+export const tvAPI = {
+  trending: () =>
+    fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}`).then((response) =>
+      response.json()
+    ),
+  airingToday: () =>
+    fetch(`${BASE_URL}/tv/airing_today?api_key=${API_KEY}`).then((response) =>
+      response.json()
+    ),
+  topRated: () =>
+    fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}`).then((response) =>
+      response.json()
+    ),
+};

@@ -10,11 +10,10 @@ const Image = styled.Image`
 `;
 
 interface PosterProps {
-  path: string;
+  path?: string;
 }
 
-const Poster: React.FC<PosterProps> = ({ path }) => (
-  <Image source={{ uri: makeImgPath(path) }} />
-);
+const Poster: React.FC<PosterProps> = ({ path }) =>
+  path ? <Image source={{ uri: makeImgPath(path) }} /> : <Image />;
 
 export default Poster;
