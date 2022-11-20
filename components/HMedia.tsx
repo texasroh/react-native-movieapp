@@ -1,4 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 
@@ -44,33 +46,39 @@ const HMedia: React.FC<IHMediaProps> = ({
   releaseDate,
   voteAverage,
 }) => {
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <Movie>
-      <Poster path={posterPath} />
-      <HColumn>
-        <Title>
-          {originalTitle.length > 30
-            ? `${originalTitle.slice(0, 30)}...`
-            : originalTitle}
-        </Title>
+    <TouchableOpacity onPress={goToDetail}>
+      <Movie>
+        <Poster path={posterPath} />
+        <HColumn>
+          <Title>
+            {originalTitle.length > 30
+              ? `${originalTitle.slice(0, 30)}...`
+              : originalTitle}
+          </Title>
 
-        {releaseDate ? (
-          <Release>
-            {new Date(releaseDate).toLocaleDateString("ko", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </Release>
-        ) : null}
+          {releaseDate ? (
+            <Release>
+              {new Date(releaseDate).toLocaleDateString("ko", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </Release>
+          ) : null}
 
-        <Overview>
-          {overview !== "" && overview.length > 80
-            ? `${overview.slice(0, 80)}...`
-            : overview}
-        </Overview>
-      </HColumn>
-    </Movie>
+          <Overview>
+            {overview !== "" && overview.length > 80
+              ? `${overview.slice(0, 80)}...`
+              : overview}
+          </Overview>
+        </HColumn>
+      </Movie>
+    </TouchableOpacity>
   );
 };
 

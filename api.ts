@@ -1,3 +1,5 @@
+import { QueryFunctionContext } from "@tanstack/react-query";
+
 const API_KEY = "c183a5884681c02c32b9c0dad01728ba";
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -57,7 +59,7 @@ export const moviesAPI = {
     fetch(
       `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1`
     ).then((response) => response.json()),
-  search: ({ queryKey }) => {
+  search: ({ queryKey }: QueryFunctionContext) => {
     const [_, query] = queryKey;
     return fetch(
       `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&page=1&query=${query}`
@@ -78,7 +80,7 @@ export const tvAPI = {
     fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}`).then((response) =>
       response.json()
     ),
-  search: ({ queryKey }) => {
+  search: ({ queryKey }: QueryFunctionContext) => {
     const [_, query] = queryKey;
     return fetch(
       `${BASE_URL}/search/tv?api_key=${API_KEY}&language=en-US&page=1&query=${query}`

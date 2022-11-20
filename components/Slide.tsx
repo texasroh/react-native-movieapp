@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import styled from "styled-components/native";
 import { IMovie } from "../api";
 import { makeImgPath } from "../utils";
@@ -34,22 +35,28 @@ const Overview = styled.Text`
 `;
 
 const Slide: React.FC<{ movie: IMovie }> = ({ movie }) => {
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <View style={{ flex: 1 }}>
-      <BgImg
-        style={StyleSheet.absoluteFill}
-        blurRadius={10}
-        source={{ uri: makeImgPath(movie.backdrop_path || "") }}
-      />
-      <Wrapper>
-        <Poster path={movie.poster_path || ""} />
-        <Column>
-          <Title>{movie.original_title}</Title>
-          <Votes votes={movie.vote_average} />
-          <Overview>{movie.overview.slice(0, 70)}...</Overview>
-        </Column>
-      </Wrapper>
-    </View>
+    <TouchableWithoutFeedback onPress={goToDetail}>
+      <View style={{ flex: 1 }}>
+        <BgImg
+          style={StyleSheet.absoluteFill}
+          blurRadius={10}
+          source={{ uri: makeImgPath(movie.backdrop_path || "") }}
+        />
+        <Wrapper>
+          <Poster path={movie.poster_path || ""} />
+          <Column>
+            <Title>{movie.original_title}</Title>
+            <Votes votes={movie.vote_average} />
+            <Overview>{movie.overview.slice(0, 70)}...</Overview>
+          </Column>
+        </Wrapper>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
