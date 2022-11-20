@@ -8,6 +8,7 @@ import { IMovie, IMovieResponse, moviesAPI } from "../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "../components/Loader";
 import HList from "../components/HList";
+import { useState } from "react";
 
 const Container = styled(FlatList<IMovie>)`
   background-color: ${(props) => props.theme.mainBgColor};
@@ -35,36 +36,39 @@ const HSeperator = styled.View`
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
   const {
     isLoading: nowPlayingLoading,
     data: nowPlayingData,
     refetch: refetchNowPlaying,
-    isRefetching: isRefetchingNowPlaying,
+    // isRefetching: isRefetchingNowPlaying,
   } = useQuery<IMovieResponse>(["movies", "nowPlaying"], moviesAPI.nowPlaying);
   const {
     isLoading: upcomingLoading,
     data: upcomingData,
     refetch: refetchUpcoming,
-    isRefetching: isRefetchingUpcoming,
+    // isRefetching: isRefetchingUpcoming,
   } = useQuery<IMovieResponse>(["movies", "upcoming"], moviesAPI.upcoming);
   const {
     isLoading: trendingLoading,
     data: trendingData,
     refetch: refetchTrending,
-    isRefetching: isRefetchingTrending,
+    // isRefetching: isRefetchingTrending,
   } = useQuery<IMovieResponse>(["movies", "trending"], moviesAPI.trending);
 
   const onRefresh = async () => {
-    queryClient.refetchQueries(["movies"]);
+    setRefreshing(true);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
     // refetchNowPlaying();
     // refetchTrending();
     // refetchUpcoming();
   };
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-  const refreshing =
-    isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
+  // const refreshing =
+  //   isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
   return loading ? (
     <Loader />
   ) : upcomingData ? (
