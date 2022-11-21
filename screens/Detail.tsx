@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
@@ -6,15 +7,21 @@ const Container = styled.ScrollView`
   background-color: ${(props) => props.theme.mainBgColor};
 `;
 
-const Detail: React.FC = ({
+export type RootStackParamList = {
+  Detail: { originalTitle: string };
+};
+
+const Detail: React.FC<
+  NativeStackScreenProps<RootStackParamList, "Detail">
+> = ({
   navigation: { setOptions },
   route: {
-    params: { original_title },
+    params: { originalTitle },
   },
 }) => {
   useEffect(() => {
     setOptions({
-      title: original_title,
+      title: originalTitle,
     });
   }, []);
   return (
