@@ -24,12 +24,23 @@ interface IVMediaProps {
   vote_average: number;
 }
 
+type RootStackParamList = {
+  Stack: {
+    screen: string;
+    params: {
+      originalTitle: string;
+    };
+  };
+};
+
 const VMedia: React.FC<IVMediaProps> = ({
   poster_path,
   original_title,
   vote_average,
 }) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const goToDetail = () => {
     navigation.navigate("Stack", {
       screen: "Detail",

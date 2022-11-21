@@ -1,9 +1,16 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
+import React from "react";
 import { useColorScheme } from "react-native";
 import { BLACK_COLOR } from "../colors";
 import Detail from "../screens/Detail";
 
-const nativeStack = createNativeStackNavigator();
+type RootStackParamList = {
+  Detail: undefined;
+};
+const nativeStack = createNativeStackNavigator<RootStackParamList>();
 
 const Stack = () => {
   const isDark = useColorScheme() === "dark";

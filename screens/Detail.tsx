@@ -7,13 +7,13 @@ const Container = styled.ScrollView`
   background-color: ${(props) => props.theme.mainBgColor};
 `;
 
-export type RootStackParamList = {
+type RootStackParamList = {
   Detail: { originalTitle: string };
 };
 
-const Detail: React.FC<
-  NativeStackScreenProps<RootStackParamList, "Detail">
-> = ({
+type DetailScreenProps = NativeStackScreenProps<RootStackParamList, "Detail">;
+
+const Detail: React.FC<DetailScreenProps> = ({
   navigation: { setOptions },
   route: {
     params: { originalTitle },
